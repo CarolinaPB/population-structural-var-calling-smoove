@@ -1,0 +1,14 @@
+name: vep_dependencies
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - _libgcc_mutex=0.1=conda_forge
+  - _openmp_mutex=4.5=1_gnu
+  - libgcc-ng=11.1.0=hc902ee8_8
+  - libgomp=11.1.0=hc902ee8_8
+  - perl=5.26.2=h36c2ea0_1008
+  - perl-dbi=1.642=pl526_0
+  - perl-try-tiny=0.30=pl526_1
+prefix: /home/WUR/moiti001/miniconda3/envs/vep_dependencies
