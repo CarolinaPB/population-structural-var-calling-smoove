@@ -1,7 +1,7 @@
 configfile: "config.yaml"
 
 from snakemake.utils import makedirs
-
+import pandas as pd
 
 #################################
 # author: Carolina Pita Barros  #
@@ -27,10 +27,10 @@ SAMPLES_LIST = config["SAMPLE_LIST"]
 CONTIGS_IGNORE = config["CONTIGS_IGNORE"]
 SPECIES = config["SPECIES"]
 
-with open(SAMPLES_LIST, "r") as infile:
-    content = infile.readlines()
-    SAMPLES = [os.path.splitext(x)[0] for x in content]
-# print(SAMPLES)
+samples_table = pd.read_csv(SAMPLES_LIST, header=None)
+samples_list = list(samples_table.iloc[:,0])
+SAMPLES = [os.path.splitext(x)[0] for x in samples_list]
+
 
 localrules: create_file_log, simple_stats
 
