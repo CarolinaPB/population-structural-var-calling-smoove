@@ -32,7 +32,7 @@ with open(SAMPLES_LIST, "r") as infile:
     SAMPLES = [os.path.splitext(x)[0] for x in content]
 # print(SAMPLES)
 
-localrules: create_file_log
+localrules: create_file_log, simple_stats
 
 rule all:
     input:
@@ -40,11 +40,9 @@ rule all:
         # expand("3_genotyped/{sample}-smoove.genotyped.vcf.gz", sample=SAMPLES),
         # expand("4_paste/{prefix}.smoove.square.vcf.gz", prefix = PREFIX),
         "FIGURES/" + PREFIX + ".pdf",
-        "2_merged/" + PREFIX + ".smoove-counts.html"
+        "2_merged/" + PREFIX + ".smoove-counts.html",
+        "6_metrics/"+ PREFIX + ".survivor.stats"
 
-
-test = glob_wildcards(os.path.join(READS_DIR, "/^([^.]+)/.bam"))
-print(test)
 
 
 with open(CONTIGS_IGNORE, "r") as infile:
@@ -220,3 +218,28 @@ rule PCA:
         plink --vcf {input} --pca --double-id --out {params.prefix} --chr-set 38 --allow-extra-chr --threads 8
         Rscript {params.rscript} --eigenvec={output.eigenvec} --eigenval={output.eigenval} --output={output.pdf}
         """
+
+rule simple_stats:
+    input:
+        rules.run_vep.output.vcf
+    output:
+        stats = "6_metrics/{prefix}.survivor.stats",
+        chr_stats = "6_metrics/{prefix}.survivor.stats_CHR",
+        support = "6_metrics/{prefix}.survivor.statssupport"
+    message:
+        'Rule {rule} processing'
+    conda:
+        "envs/survivor.yaml"
+    params:
+        tmp = "6_metrics/{prefix}.stats.temp.vcf"
+    log:
+        err = "logs_slurm/simple_stats_{prefix}.err",
+        out = "6_metrics/{prefix}.survivor.overall.stats"
+    shell:
+        """
+        gzip -d -c {input} > {params.tmp}
+        SURVIVOR stats {params.tmp} -1 -1 -1 {output.stats} 2> {log.err} 1> {log.out}
+
+        rm {params.tmp}
+        """
+
