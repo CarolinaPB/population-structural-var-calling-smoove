@@ -31,6 +31,7 @@ samples_table = pd.read_csv(SAMPLES_LIST, header=None)
 samples_list = list(samples_table.iloc[:,0])
 SAMPLES = [os.path.splitext(x)[0] for x in samples_list]
 
+# SAMPLES, = glob_wildcards(os.path.join(READS_DIR, "{sample}.bam"))
 
 localrules: create_file_log, simple_stats
 
@@ -41,7 +42,9 @@ rule all:
         # expand("4_paste/{prefix}.smoove.square.vcf.gz", prefix = PREFIX),
         "FIGURES/" + PREFIX + ".pdf",
         "2_merged/" + PREFIX + ".smoove-counts.html",
-        "6_metrics/"+ PREFIX + ".survivor.stats"
+        "6_metrics/"+ PREFIX + ".survivor.stats",
+        "5_postprocessing/"+PREFIX + "_DUP_DEL_INV.vcf",
+        "5_postprocessing/"+ PREFIX + "_BND.vcf"
 
 
 
@@ -81,9 +84,6 @@ smoove call --outdir {params.outdir} \
 --excludechroms {params.contigs} \
 {input.bam}
         """
-
-# TRIMMED = [os.path.splitext(f)[0] for f in SAMPLES]
-
 
 rule smoove_merge:
     input:
@@ -243,3 +243,19 @@ rule simple_stats:
         rm {params.tmp}
         """
 
+rule add_depth:
+    input:
+        rules.run_vep.output.vcf
+    output:
+        "5_postprocessing/{prefix}_DUP_DEL_INV.vcf",
+        "5_postprocessing/{prefix}_BND.vcf"
+    message:
+        'Rule {rule} processing'
+    params:
+        script = os.path.join(workflow.basedir, "scripts/add_depth_field.py"),
+        prefix = os.path.join("5_postprocessing",PREFIX)
+    log:
+        err = "logs_slurm/add_depth_{prefix}.err",
+        out = "logs_slurm/add_depth_{prefix}.out"
+    shell:
+        'python {params.script} -v {input} -Q 30 -p {params.prefix} 2> {log.err} 1> {log.out}'
