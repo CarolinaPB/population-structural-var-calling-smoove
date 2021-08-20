@@ -276,7 +276,7 @@ rule get_tsv:
         out = "logs_slurm/get_tsv_{prefix}.out"
     shell:
         """
-        module load python/3.9.4
+        # module load python/3.9.4
         python {params.script} -v {input.vcf} -s {input.samples_file} -o {output}
         """
         
