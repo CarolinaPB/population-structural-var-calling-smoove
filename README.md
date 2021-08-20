@@ -10,19 +10,24 @@ Click [here](https://github.com/CarolinaPB/snakemake-template/blob/master/Short%
 
 ## ABOUT
 This is a pipeline to perform structural variant calling in a population using Smoove. It also runs VEP and performs PCA. 
-#TODO complete
+In addition to the VCF with the SVs, you also get a .tsv file with some summarized information on the SVs: it included allele frequency per population, as well as VEP annotation and depth fold change as described in [duphold](https://github.com/brentp/duphold:
+> DHBFC: fold-change for the variant depth relative to bins in the genome with similar GC-content.  
+> DHFFC: fold-change for the variant depth relative to Flanking regions.
 
-Tools used:
+
 #### Tools used:
 - Smoove - SV calling
 - VEP - determines the effect of the variants
 - Plink - perform PCA
 - R - plot PCA
 - SURVIVOR - basic SV stats
+- Python - add depth to vcf and create final table 
+  - PyVcf 
 
-<!-- | ![DAG](https://github.com/CarolinaPB/WUR_mapping-variant-calling/blob/main/dag.png) |
+
+| ![DAG](https://github.com/CarolinaPB/population-structural-var-calling-smoove/blob/single_run/dag.png) |
 |:--:|
-|*Pipeline workflow* | -->
+|*Pipeline workflow* |
 
 
 ### Edit config.yaml with the paths to your files
@@ -38,12 +43,12 @@ PREFIX: <output name>
 
 - OUTDIR - directory where snakemake will run and where the results will be written to
 - READS_DIR - path to the directory that contains the reads
-- SAMPLE_LIST - two column csv with the name of the bam files to use in the first column and the name of the corresponding population on the second column. These bams should all be in the same directory (READS_DIR)
+- SAMPLE_LIST - three column csv with the sample name, name of the bam files to use in the second column and the name of the corresponding population on the third column. These bams should all be in the same directory (READS_DIR)
 - Example: 
-> sample1.bam,Pop1   
-> sample2.bam,Pop1   
-> sample3.bam,Pop2   
-> sample4.bam,Pop2  
+> sample1,sample1.bam,Pop1   
+> sample2,sample2.bam,Pop1   
+> sample3,sample3.bam,Pop2   
+> sample4,sample4.bam,Pop2  
 - REFERENCE - path to the assembly file
 - CONTIGS_IGNORE - contigs to be excluded from SV calling (usually the small contigs)
 - SPECIES - species name to be used for VEP
@@ -85,4 +90,5 @@ In the Snakefile, in rule `run_vep`, replace `/cm/shared/apps/SHARED/ensembl-vep
   * {prefix}.smoove.square.vep.vcf.gz - Final VCF
   * {prefix}.smoove.square.vep.vcf.gz_summary - statistics from VEP
   * {prefix}.nosex, {prefix}.log, {prefix}.eigenvec, {prefix}.eigenval - output files from the PCA
+  * {prefix}_DUP_DEL_INV_table.tsv - table with the most important information extracted from the VCF. Contains information about the SV, allele frequency for each population, VEP annotation and depth information
 * **6_metrics** directory that contains general stats about the number of SVs found
