@@ -26,6 +26,7 @@ In addition to the VCF with the SVs, you also get a .tsv file with some summariz
 - Python - add depth to vcf and create final table 
   - PyVcf (you might need to install it)
 
+#### Pipeline worflow
 <img src="dag.png" class="img-responsive" alt="">
 <!-- | ![DAG](https://github.com/CarolinaPB/population-structural-var-calling-smoove/blob/single_run/dag.png) |
 |:--:|
