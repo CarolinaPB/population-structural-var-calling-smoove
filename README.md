@@ -21,7 +21,7 @@ In addition to the VCF with the SVs, you also get a .tsv file with some summariz
 - R - plot PCA
 - SURVIVOR - basic SV stats
 - Python - add depth to vcf and create final table 
-  - PyVcf (you might need to install it)
+  - PyVcf
 
 
 | ![DAG](https://github.com/CarolinaPB/population-structural-var-calling-smoove/blob/single_run/dag.png) |
