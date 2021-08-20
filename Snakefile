@@ -28,7 +28,7 @@ CONTIGS_IGNORE = config["CONTIGS_IGNORE"]
 SPECIES = config["SPECIES"]
 
 samples_table = pd.read_csv(SAMPLES_LIST, header=None)
-samples_list = list(samples_table.iloc[:,0])
+samples_list = list(samples_table.iloc[:,1])
 SAMPLES = [os.path.splitext(x)[0] for x in samples_list]
 
 # SAMPLES, = glob_wildcards(os.path.join(READS_DIR, "{sample}.bam"))
@@ -44,7 +44,8 @@ rule all:
         "2_merged/" + PREFIX + ".smoove-counts.html",
         "6_metrics/"+ PREFIX + ".survivor.stats",
         "5_postprocessing/"+PREFIX + "_DUP_DEL_INV.vcf",
-        "5_postprocessing/"+ PREFIX + "_BND.vcf"
+        "5_postprocessing/"+ PREFIX + "_BND.vcf",
+        "5_postprocessing/"+ PREFIX + "_DUP_DEL_INV_table.tsv"
 
 
 
@@ -247,8 +248,8 @@ rule add_depth:
     input:
         rules.run_vep.output.vcf
     output:
-        "5_postprocessing/{prefix}_DUP_DEL_INV.vcf",
-        "5_postprocessing/{prefix}_BND.vcf"
+        dupdelinv = "5_postprocessing/{prefix}_DUP_DEL_INV.vcf",
+        bnd = "5_postprocessing/{prefix}_BND.vcf"
     message:
         'Rule {rule} processing'
     params:
@@ -259,3 +260,23 @@ rule add_depth:
         out = "logs_slurm/add_depth_{prefix}.out"
     shell:
         'python {params.script} -v {input} -Q 30 -p {params.prefix} 2> {log.err} 1> {log.out}'
+
+rule get_tsv:
+    input:
+        vcf = rules.add_depth.output.dupdelinv,
+        samples_file = SAMPLES_LIST
+    output:
+        "5_postprocessing/{prefix}_DUP_DEL_INV_table.tsv"
+    message:
+        'Rule {rule} processing'
+    params:
+        script = os.path.join(workflow.basedir, "scripts/get_flat_file.py"),
+    log:
+        err = "logs_slurm/get_tsv_{prefix}.err",
+        out = "logs_slurm/get_tsv_{prefix}.out"
+    shell:
+        """
+        module load python/3.9.4
+        python {params.script} -v {input.vcf} -s {input.samples_file} -o {output}
+        """
+        
