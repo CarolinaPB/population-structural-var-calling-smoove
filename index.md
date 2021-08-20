@@ -26,11 +26,11 @@ In addition to the VCF with the SVs, you also get a .tsv file with some summariz
 - Python - add depth to vcf and create final table 
   - PyVcf (you might need to install it)
 
-
-| ![DAG](https://github.com/CarolinaPB/population-structural-var-calling-smoove/blob/single_run/dag.png) |
+<img src="dag.png" class="img-responsive" alt="">
+<!-- | ![DAG](https://github.com/CarolinaPB/population-structural-var-calling-smoove/blob/single_run/dag.png) |
 |:--:|
 |*Pipeline workflow* |
-
+ -->
 
 ### Edit config.yaml with the paths to your files
 ```
