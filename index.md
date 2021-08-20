@@ -12,7 +12,7 @@ Click [here](https://github.com/CarolinaPB/snakemake-template/blob/master/Short%
 
 ## ABOUT
 This is a pipeline to perform structural variant calling in a population using Smoove. It also runs VEP and performs PCA. 
-In addition to the VCF with the SVs, you also get a .tsv file with some summarized information on the SVs: it included allele frequency per population, as well as VEP annotation and depth fold change as described in [duphold](https://github.com/brentp/duphold:
+In addition to the VCF with the SVs, you also get a .tsv file with some summarized information on the SVs: it included allele frequency per population, as well as VEP annotation and depth fold change as described in [duphold](https://github.com/brentp/duphold):
 > DHBFC: fold-change for the variant depth relative to bins in the genome with similar GC-content.  
 > DHFFC: fold-change for the variant depth relative to Flanking regions.
 
@@ -85,7 +85,7 @@ When multiple assemblies are found you need to run it again with `--ASSEMBLY <as
 In the Snakefile, in rule `run_vep`, replace `/cm/shared/apps/SHARED/ensembl-vep/vep` with `vep`
 
 ## RESULTS
-* **<run_date>_files.txt** Dated file with an overview of the files used to run the pipeline (for documentation purposes)
+* ***<run_date>_files.txt*** Dated file with an overview of the files used to run the pipeline (for documentation purposes)
 * **2_merged** 
   * {prefix}.smoove-counts.html - shows a summary of the number of reads before and after filtering 
 * **5_postprocessing** directory that contains the final VCF file containing the structural variants found. This file has been annotated with VEP
