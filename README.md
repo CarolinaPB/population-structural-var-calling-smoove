@@ -92,3 +92,4 @@ In the Snakefile, in rule `run_vep`, replace `/cm/shared/apps/SHARED/ensembl-vep
   * {prefix}.nosex, {prefix}.log, {prefix}.eigenvec, {prefix}.eigenval - output files from the PCA
   * {prefix}_DUP_DEL_INV_table.tsv - table with the most important information extracted from the VCF. Contains information about the SV, allele frequency for each population, VEP annotation and depth information
 * **6_metrics** directory that contains general stats about the number of SVs found
+* **FIGURES** directory that contains the PCA plot 
