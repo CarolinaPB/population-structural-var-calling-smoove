@@ -199,7 +199,8 @@ module load samtools
 
 rule PCA:
     input:
-        rules.run_vep.output.vcf
+        vcf = rules.run_vep.output.vcf,
+        sample_list = SAMPLES_LIST
     output:
         eigenvec = "5_postprocessing/{prefix}.eigenvec",
         eigenval = "5_postprocessing/{prefix}.eigenval",
@@ -216,8 +217,8 @@ rule PCA:
         module load R/3.6.2
         module load plink/1.9-180913
 
-        plink --vcf {input} --pca --double-id --out {params.prefix} --chr-set 38 --allow-extra-chr --threads 8
-        Rscript {params.rscript} --eigenvec={output.eigenvec} --eigenval={output.eigenval} --output={output.pdf}
+        plink --vcf {input.vcf} --pca --double-id --out {params.prefix} --chr-set 38 --allow-extra-chr --threads 8
+        Rscript {params.rscript} --eigenvec={output.eigenvec} --eigenval={output.eigenval} --output={output.pdf} --sample_list={input.sample_list}
         """
 
 rule simple_stats:
