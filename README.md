@@ -10,9 +10,10 @@ Click [here](https://github.com/CarolinaPB/snakemake-template/blob/master/Short%
 
 ## ABOUT
 This is a pipeline to perform structural variant calling in a population using Smoove. It also runs VEP and performs PCA. 
-In addition to the VCF with the SVs, you also get a .tsv file with some summarized information on the SVs: it included allele frequency per population, as well as VEP annotation and depth fold change as described in [duphold](https://github.com/brentp/duphold:
+In addition to the VCF with the SVs, you also get a .tsv file with some summarized information on the SVs: it includes allele frequency per population, as well as VEP annotation and depth fold change as described in [duphold](https://github.com/brentp/duphold:
 > DHBFC: fold-change for the variant depth relative to bins in the genome with similar GC-content.  
 > DHFFC: fold-change for the variant depth relative to Flanking regions.
+
 
 #### Tools used:
 - Smoove - SV calling
@@ -21,7 +22,7 @@ In addition to the VCF with the SVs, you also get a .tsv file with some summariz
 - R - plot PCA
 - SURVIVOR - basic SV stats
 - Python - add depth to vcf and create final table 
-  - PyVcf
+  - PyVcf 
 
 
 | ![DAG](https://github.com/CarolinaPB/population-structural-var-calling-smoove/blob/single_run/dag.png) |
@@ -52,6 +53,7 @@ PREFIX: <output name>
 - CONTIGS_IGNORE - contigs to be excluded from SV calling (usually the small contigs)
 - SPECIES - species name to be used for VEP
 - PREFIX - prefix for the created files
+
 If you want the results to be written to this directory (not to a new directory), comment out or remove
 ```
 OUTDIR: /path/to/outdir
@@ -86,8 +88,14 @@ In the Snakefile, in rule `run_vep`, replace `/cm/shared/apps/SHARED/ensembl-vep
   * {prefix}.smoove-counts.html - shows a summary of the number of reads before and after filtering 
 * **5_postprocessing** directory that contains the final VCF file containing the structural variants found. This file has been annotated with VEP
   * {prefix}.smoove.square.vep.vcf.gz - Final VCF
-  * {prefix}.smoove.square.vep.vcf.gz_summary - statistics from VEP
+  * {prefix}.smoove.square.vep.vcf.gz_summary.html - statistics from VEP
   * {prefix}.nosex, {prefix}.log, {prefix}.eigenvec, {prefix}.eigenval - output files from the PCA
   * {prefix}_DUP_DEL_INV_table.tsv - table with the most important information extracted from the VCF. Contains information about the SV, allele frequency for each population, VEP annotation and depth information
+  * {prefix}_DUP_DEL_INV.vcf - vcf file with annotated duplications, deletions and inversions
+  * {prefix}_BND.vcf - vcf file with variants annotated with BND
 * **6_metrics** directory that contains general stats about the number of SVs found
 * **FIGURES** directory that contains the PCA plot 
+
+What you do with the results from this structural variant calling pipeline depends on your research question: a possible next step would be to explore the **{prefix}_DUP_DEL_INV_table.tsv** file and look at the largest SVs found (sort by _SVLEN_) or at a specific effect in the ANNOTATION column, such as "frameshift_variant".  
+
+See [VEP effect descriptions]( https://m.ensembl.org/info/genome/variation/prediction/predicted_data.html) for a short description of the effects annotated by VEP
