@@ -31,15 +31,11 @@ samples_table = pd.read_csv(SAMPLES_LIST, header=None)
 samples_list = list(samples_table.iloc[:,1])
 SAMPLES = [os.path.splitext(x)[0] for x in samples_list]
 
-# SAMPLES, = glob_wildcards(os.path.join(READS_DIR, "{sample}.bam"))
-
 localrules: create_file_log, simple_stats
 
 rule all:
     input:
         files_log,
-        # expand("3_genotyped/{sample}-smoove.genotyped.vcf.gz", sample=SAMPLES),
-        # expand("4_paste/{prefix}.smoove.square.vcf.gz", prefix = PREFIX),
         "FIGURES/" + PREFIX + ".pdf",
         "2_merged/" + PREFIX + ".smoove-counts.html",
         "6_metrics/"+ PREFIX + ".survivor.stats",
