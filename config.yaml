@@ -1,0 +1,7 @@
+OUTDIR: /path/to/output 
+READS_DIR: /path/to/reads/ # don't add the reads files, just the directory where they are
+SAMPLE_LIST: /path/to/file
+REFERENCE: /path/to/assembly
+CONTIGS_IGNORE: /path/to/file
+SPECIES: <species_name>
+PREFIX: <output name>
