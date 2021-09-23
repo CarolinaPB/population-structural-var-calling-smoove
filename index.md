@@ -98,6 +98,6 @@ In the Snakefile, in rule `run_vep`, replace `/cm/shared/apps/SHARED/ensembl-vep
 * **6_metrics** directory that contains general stats about the number of SVs found
 * **FIGURES** directory that contains the PCA plot 
 
-What you do with the results from this structural variant calling pipeline depends on your research question: a possible next step would be to explore the **{prefix}_DUP_DEL_INV_table.tsv** file and look at the largest SVs found (sort by _SVLEN_) or at a specific effect in the ANNOTATION column, such as "frameshift_variant".  
+What you do with the results from this structural variant calling pipeline depends on your research question: a possible next step would be to explore the **{prefix}\_DUP_DEL_INV_table.tsv** file and look at the largest SVs found (sort by _SVLEN_) or at a specific effect in the ANNOTATION column, such as "frameshift_variant".  
 
 See [VEP effect descriptions]( https://m.ensembl.org/info/genome/variation/prediction/predicted_data.html) for a short description of the effects annotated by VEP
