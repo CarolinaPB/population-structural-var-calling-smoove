@@ -9,6 +9,7 @@ navbar-links:
   Pipelines:
     - Mapping and variant calling (short reads): https://carolinapb.github.io/WUR_mapping-variant-calling/
     - Population SV calling: https://carolinapb.github.io/population-structural-var-calling-smoove/
+    - Population mapping: https://carolinapb.github.io/population-mapping
 author: Carolina Pita Barros
 
 # Select the social network links that you want to show in the footer.
