@@ -36,7 +36,7 @@ for record in reader:
     
     pop_gt_dict = {}
     for sample in record.samples:
-        population = samples_table.loc[samples_table["sample"] == sample.sample, "population"].item()
+        population = samples_table.loc[samples_table["sample"].str.startswith(sample.sample), "population"].item()
         if population in pop_gt_dict:
             pop_gt_dict[population].append(sample["GT"])
         else:
