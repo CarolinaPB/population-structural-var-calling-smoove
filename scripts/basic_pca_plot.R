@@ -25,14 +25,13 @@ opt = parse_args(opt_parser);
 pca <- fread(opt$eigenvec, header=F)
 eigenval <- scan(opt$eigenval)
 
-pve <- data.frame(PC = 1:20, pve = eigenval/sum(eigenval)*100)
+pve <- data.frame(pve = eigenval/sum(eigenval)*100)
 
 samples <- fread(opt$sample_list, col.names = c("sample", "bam", "population"), header = F)
 
 pca_samples <- merge(pca, samples, by.x="V1", by.y="sample")
 setnames(pca_samples, old = c("V3","V4"),new = c("PC1", "PC2") )
 
-# pdf(opt$output)
 b <- ggplot(pca_samples, aes(PC1, PC2, shape=population, col=population)) + geom_point()
 b <- b + scale_shape_manual(values = LETTERS[1:26])
 b <- b + theme_light()
@@ -42,9 +41,3 @@ ggsave(filename = opt$output,
 plot = b, 
 device = "pdf", 
 )
-# dev.off()
-
-
-# pdf(opt$output)
-# plot(pca$V3, pca$V4, xlab=paste0("PC1 (", signif(pve$pve[1], 3), "%)"), ylab=paste0("PC2 (", signif(pve$pve[2], 3), "%)"))
-# dev.off()
