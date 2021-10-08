@@ -49,6 +49,8 @@ PREFIX: <output name>
 > sample2,sample2.bam,Pop1   
 > sample3,sample3.bam,Pop2   
 > sample4,sample4.bam,Pop2  
+
+Tip: use the name of the bam file without the `.bam` extension as the sample name. Ex: from `sample1.bam` to `sample1`
 - REFERENCE - path to the assembly file
 - CONTIGS_IGNORE - contigs to be excluded from SV calling (usually the small contigs)
 - SPECIES - species name to be used for VEP
