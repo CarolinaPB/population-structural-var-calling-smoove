@@ -104,7 +104,7 @@ If you get an error like this:
 Warning in install.packages(new.packages) :
 'lib = "/cm/shared/apps/R/3.6.2/lib64/R/library"' is not writable
 ```
-Follow the instructions on how to install R packages locally [here](https://wiki.anunna.wur.nl/index.php/Installing_R_packages_locally)
+Follow the instructions on how to install R packages locally [here](https://wiki.anunna.wur.nl/index.php/Installing_R_packages_locally) and try to install the packages again.
 
 ## RESULTS
 * **<run_date>_files.txt** Dated file with an overview of the files used to run the pipeline (for documentation purposes)
