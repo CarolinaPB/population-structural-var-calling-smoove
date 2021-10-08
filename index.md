@@ -12,7 +12,7 @@ Click [here](https://github.com/CarolinaPB/snakemake-template/blob/master/Short%
 
 ## ABOUT
 This is a pipeline to perform structural variant calling in a population using Smoove. It also runs VEP and performs PCA. 
-In addition to the VCF with the SVs, you also get a .tsv file with some summarized information on the SVs: it includes allele frequency per population, as well as VEP annotation and depth fold change as described in [duphold](https://github.com/brentp/duphold:
+In addition to the VCF with the SVs, you also get a .tsv file with some summarized information on the SVs: it includes allele frequency per population, as well as VEP annotation and depth fold change as described in [duphold](https://github.com/brentp/duphold):
 > DHBFC: fold-change for the variant depth relative to bins in the genome with similar GC-content.  
 > DHFFC: fold-change for the variant depth relative to Flanking regions.
 
@@ -111,15 +111,28 @@ Follow the instructions on how to install R packages locally [here](https://wiki
 * **2_merged** 
   * {prefix}.smoove-counts.html - shows a summary of the number of reads before and after filtering 
 * **5_postprocessing** directory that contains the final VCF file containing the structural variants found. This file has been annotated with VEP
-  * {prefix}.smoove.square.vep.vcf.gz - Final VCF
+  * {prefix}.smoove.square.vep.vcf.gz - Final VCF - with VEP annotation, not filtered for quality
   * {prefix}.smoove.square.vep.vcf.gz_summary.html - statistics from VEP
   * {prefix}.nosex, {prefix}.log, {prefix}.eigenvec, {prefix}.eigenval - output files from the PCA
-  * {prefix}_DUP_DEL_INV_table.tsv - table with the most important information extracted from the VCF. Contains information about the SV, allele frequency for each population, VEP annotation and depth information
-  * {prefix}_DUP_DEL_INV.vcf - vcf file with annotated duplications, deletions and inversions
+  * {prefix}_DUP_DEL_INV_table.tsv - table with the most important information extracted from the VCF. Contains information about the SV, allele frequency for each population, VEP annotation and depth information. The variants have been filtered with Minimum Quality score = 30
+  * {prefix}_DUP_DEL_INV.vcf - vcf file with annotated duplications, deletions and inversions. It has been filtered with Minimum Quality score = 30 and the DEPTH* field was added
   * {prefix}_BND.vcf - vcf file with variants annotated with BND
 * **6_metrics** directory that contains general stats about the number of SVs found
 * **FIGURES** directory that contains the PCA plot 
 
+
 What you do with the results from this structural variant calling pipeline depends on your research question: a possible next step would be to explore the **{prefix}\_DUP_DEL_INV_table.tsv** file and look at the largest SVs found (sort by _SVLEN_) or at a specific effect in the ANNOTATION column, such as "frameshift_variant".  
 
 See [VEP effect descriptions]( https://m.ensembl.org/info/genome/variation/prediction/predicted_data.html) for a short description of the effects annotated by VEP
+
+
+***
+*The **DEPTH** field in the vcf has six fields, corresponding to the average depth across all samples.
+```
+DEPTH=(DHBFC_1/1, DHBFC_0/1, DHBFC_0/0, DHFFC_1/1, DHFFC_0/1, DHFFC_0/0)
+```
+Depth fold change as described in [duphold](https://github.com/brentp/duphold):
+> DHBFC: fold-change for the variant depth relative to bins in the genome with similar GC-content.  
+> DHFFC: fold-change for the variant depth relative to Flanking regions.
+
+These fields are also in the `{prefix}_DUP_DEL_INV_table.tsv` file
