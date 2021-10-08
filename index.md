@@ -62,6 +62,7 @@ OUTDIR: /path/to/outdir
 ```
 
 ## ADDITIONAL SET UP
+### Configuring VEP
 This pipeline uses VEP in offline mode, which increases performance. In order to use it in this mode, the cache for the species used needs to be installed:
 #### For people using WUR's Anunna:
 Check if the cache file for your species already exist in `/lustre/nobackup/SHARED/cache/`. If it doesn't, create it with
@@ -83,6 +84,25 @@ vep_install --CACHEDIR <where/to/install/cache> --AUTO c -n --SPECIES <species>
 When multiple assemblies are found you need to run it again with `--ASSEMBLY <assembly name>`, where "assembly name" is the name of the assembly you want to use.
 
 In the Snakefile, in rule `run_vep`, replace `/cm/shared/apps/SHARED/ensembl-vep/vep` with `vep`
+
+### Installing R packages 
+
+First load R: 
+```module load R/3.6.2```
+
+Enter the R environment by writing `R` and clicking enter. Install the packages:
+```
+list.of.packages <- c("optparse", "data.table", "ggplot2")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+```
+
+If you get an error like this:
+```
+Warning in install.packages(new.packages) :
+'lib = "/cm/shared/apps/R/3.6.2/lib64/R/library"' is not writable
+```
+Follow the instructions on how to install R packages locally [here](https://wiki.anunna.wur.nl/index.php/Installing_R_packages_locally)
 
 ## RESULTS
 * **<run_date>_files.txt** Dated file with an overview of the files used to run the pipeline (for documentation purposes)
