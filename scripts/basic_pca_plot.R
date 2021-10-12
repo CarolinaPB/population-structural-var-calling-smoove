@@ -29,7 +29,8 @@ pve <- data.frame(pve = eigenval/sum(eigenval)*100)
 
 samples <- fread(opt$sample_list, col.names = c("sample", "bam", "population"), header = F)
 
-pca_samples <- merge(pca, samples, by.x="V1", by.y="sample")
+pca_samples <- data.table(pca)
+pca_samples$population <- samples[startsWith(sample, pca$V1)]$population
 setnames(pca_samples, old = c("V3","V4"),new = c("PC1", "PC2") )
 
 b <- ggplot(pca_samples, aes(PC1, PC2, shape=population, col=population)) + geom_point()
