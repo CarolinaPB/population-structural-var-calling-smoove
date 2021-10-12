@@ -129,7 +129,7 @@ rule smoove_genotype:
         """
 export PATH={params.scripts_dir}:$PATH
 
-smoove genotype -x -p 3 \
+smoove genotype -x \
 --name {params.name} \
 --outdir {params.outdir} \
 --fasta {input.reference} \
