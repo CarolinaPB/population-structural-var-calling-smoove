@@ -26,6 +26,7 @@ PREFIX = config["PREFIX"]
 SAMPLES_LIST = config["SAMPLE_LIST"]
 CONTIGS_IGNORE = config["CONTIGS_IGNORE"]
 SPECIES = config["SPECIES"]
+NUM_CHRS =  config["NUM_CHRS"]
 
 samples_table = pd.read_csv(SAMPLES_LIST, header=None)
 samples_list = list(samples_table.iloc[:,1])
@@ -205,7 +206,8 @@ rule PCA:
         'Rule {rule} processing'
     params:
         prefix= os.path.join("5_postprocessing",PREFIX),
-        rscript = os.path.join(workflow.basedir, "scripts/basic_pca_plot.R")
+        rscript = os.path.join(workflow.basedir, "scripts/basic_pca_plot.R"),
+        num_chrs = NUM_CHRS
     group:
         'calling'
     shell:
@@ -213,7 +215,7 @@ rule PCA:
         module load R/3.6.2
         module load plink/1.9-180913
 
-        plink --vcf {input.vcf} --pca --double-id --out {params.prefix} --chr-set 38 --allow-extra-chr --threads 8
+        plink --vcf {input.vcf} --pca --double-id --out {params.prefix} --chr-set {params.num_chrs} --allow-extra-chr --threads 8
         Rscript {params.rscript} --eigenvec={output.eigenvec} --eigenval={output.eigenval} --output={output.pdf} --sample_list={input.sample_list}
         """
 

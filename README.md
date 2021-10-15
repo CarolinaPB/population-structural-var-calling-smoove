@@ -39,6 +39,7 @@ REFERENCE: /path/to/assembly
 CONTIGS_IGNORE: /path/to/file
 SPECIES: <species_name>
 PREFIX: <output name>
+NUM_CHRS: <number of chromosomes>
 ```
 
 - OUTDIR - directory where snakemake will run and where the results will be written to
@@ -55,6 +56,7 @@ Tip: use the name of the bam file without the .bam extension as the sample name.
 - CONTIGS_IGNORE - contigs to be excluded from SV calling (usually the small contigs)
 - SPECIES - species name to be used for VEP
 - PREFIX - prefix for the created files
+- NUM_CHRS - number of chromosomes for your species (necessary for plink). ex: 38
 
 If you want the results to be written to this directory (not to a new directory), comment out or remove
 ```

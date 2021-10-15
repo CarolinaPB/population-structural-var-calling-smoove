@@ -5,3 +5,4 @@ REFERENCE: /path/to/assembly
 CONTIGS_IGNORE: /path/to/file
 SPECIES: <species_name>
 PREFIX: <output name>
+NUM_CHRS: <number of chromosomes>
