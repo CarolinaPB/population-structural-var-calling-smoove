@@ -33,12 +33,14 @@ pca_samples <- data.table(pca)
 pca_samples$population <- samples[startsWith(sample, pca$V1)]$population
 setnames(pca_samples, old = c("V3","V4"),new = c("PC1", "PC2") )
 
+pdf(opt$output)
 b <- ggplot(pca_samples, aes(PC1, PC2, shape=population, col=population)) + geom_point()
 b <- b + scale_shape_manual(values = LETTERS[1:26])
 b <- b + theme_light()
 b <- b + xlab(paste0("PC1 (", signif(pve$pve[1], 3), "%)")) + ylab(paste0("PC2 (", signif(pve$pve[2], 3), "%)"))
-
-ggsave(filename = opt$output,
-plot = b, 
-device = "pdf", 
-)
+print(b)
+dev.off()
+# ggsave(filename = opt$output,
+# plot = b, 
+# device = "pdf", 
+# )
