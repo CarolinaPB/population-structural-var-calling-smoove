@@ -6,3 +6,4 @@ CONTIGS_IGNORE: /path/to/file
 SPECIES: <species_name>
 PREFIX: <output name>
 NUM_CHRS: <number of chromosomes>
+BWA_MEM_M: <Y/N>

@@ -27,10 +27,17 @@ SAMPLES_LIST = config["SAMPLE_LIST"]
 CONTIGS_IGNORE = config["CONTIGS_IGNORE"]
 SPECIES = config["SPECIES"]
 NUM_CHRS =  config["NUM_CHRS"]
+BWA_MEM_M = config["BWA_MEM_M"]
 
 samples_table = pd.read_csv(SAMPLES_LIST, header=None)
 samples_list = list(samples_table.iloc[:,1])
 SAMPLES = [os.path.splitext(x)[0] for x in samples_list]
+
+def preprocessing(choice):
+    if choice == "Y":
+        return(expand("1_call/{sample}.{read_type}.bam", sample = SAMPLES, read_type = ["disc", "split"]))
+    elif choice == "N":
+        return([])
 
 localrules: create_file_log, simple_stats
 
@@ -42,7 +49,7 @@ rule all:
         "6_metrics/"+ PREFIX + ".survivor.stats",
         "5_postprocessing/"+PREFIX + "_DUP_DEL_INV.vcf",
         "5_postprocessing/"+ PREFIX + "_BND.vcf",
-        "5_postprocessing/"+ PREFIX + "_DUP_DEL_INV_table.tsv"
+        "5_postprocessing/"+ PREFIX + "_DUP_DEL_INV_table.tsv",
 
 
 
@@ -50,10 +57,45 @@ with open(CONTIGS_IGNORE, "r") as infile:
     content =  infile.read().splitlines()
     CONTIGS =  ",".join(content)
 
+rule split_disc_reads:
+    input:
+        os.path.join(READS_DIR, "{sample}.bam")
+    output:
+        split = "1_call/{sample}.split.sam",
+        disc = "1_call/{sample}.disc.sam"
+    message:
+        'Rule {rule} processing'
+    params:
+        scripts_dir = os.path.join(workflow.basedir, "scripts/")
+    conda:
+        "envs/python2.7.yml"
+    group:
+        'smoove_call'
+    shell:
+        """
+python {params.scripts_dir}bamgroupreads.py -f -M -i {input} | samblaster --ignoreUnmated -M -a -e -d {output.disc} -s {output.split} -o /dev/null        
+        """
+
+rule sort_reads:
+    input:
+        "1_call/{sample}.{read_type}.sam"
+    output:
+        "1_call/{sample}.{read_type}.bam"
+    message:
+        'Rule {rule} processing'
+    group:
+        'smoove_call'
+    shell:
+        """
+module load samtools
+samtools sort -@ 12 -O bam {input} > {output}
+        """
+
 rule smoove_call:
     input:
         bam = os.path.join(READS_DIR, "{sample}.bam"),
         reference = REFERENCE,
+        preprocessing = preprocessing(BWA_MEM_M)
     output:
         vcf = temp("1_call/{sample}-smoove.genotyped.vcf.gz"),
         idx = temp("1_call/{sample}-smoove.genotyped.vcf.gz.csi"),
@@ -69,6 +111,8 @@ rule smoove_call:
         scripts_dir = os.path.join(workflow.basedir, "scripts/")
     conda:
         "envs/smoove.yaml"
+    group:
+        'smoove_call'
     shell:
         """
 export PATH={params.scripts_dir}:$PATH
