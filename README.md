@@ -60,6 +60,10 @@ Tip: use the name of the bam file without the .bam extension as the sample name.
 - PREFIX - prefix for the created files
 - NUM_CHRS - number of chromosomes for your species (necessary for plink). ex: 38
 - BWA_MEM_M - if you mapped your reads with `bwa mem` using the `-M` parameter and you want split read support in your VCF you need to run an extra step. For this write `Y`.
+  - If `BWA_MEM_M: Y` an extra step will be done: **split_disc_reads** to create the split and disc bam files before smoove call runs
+  - If `BWA_MEM_M: N` **split_disc_reads** will not run and the pipeline will start with the **smoove_call** step  
+For a more detailed explanation see [smoove SR support](https://carolinapb.github.io/2021-10-28-smoove-SR-support/)
+
 
 If you want the results to be written to this directory (not to a new directory), comment out or remove
 ```
