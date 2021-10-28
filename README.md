@@ -21,8 +21,9 @@ In addition to the VCF with the SVs, you also get a .tsv file with some summariz
 - Plink - perform PCA
 - R - plot PCA
 - SURVIVOR - basic SV stats
-- Python - add depth to vcf and create final table 
-  - PyVcf 
+- Python  
+  - PyVcf - add depth to vcf and create final table
+  - bamgroupreads.py + samblaster - create bam files with split and discordant reads
 
 
 | ![DAG](https://github.com/CarolinaPB/population-structural-var-calling-smoove/blob/single_run/dag.png) |
@@ -40,6 +41,7 @@ CONTIGS_IGNORE: /path/to/file
 SPECIES: <species_name>
 PREFIX: <output name>
 NUM_CHRS: <number of chromosomes>
+BWA_MEM_M: Y/N
 ```
 
 - OUTDIR - directory where snakemake will run and where the results will be written to
@@ -57,6 +59,7 @@ Tip: use the name of the bam file without the .bam extension as the sample name.
 - SPECIES - species name to be used for VEP
 - PREFIX - prefix for the created files
 - NUM_CHRS - number of chromosomes for your species (necessary for plink). ex: 38
+- BWA_MEM_M - if you mapped your reads with `bwa mem` using the `-M` parameter and you want split read support in your VCF you need to run an extra step. For this write `Y`.
 
 If you want the results to be written to this directory (not to a new directory), comment out or remove
 ```
