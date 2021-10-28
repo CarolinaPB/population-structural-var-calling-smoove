@@ -26,7 +26,7 @@ In addition to the VCF with the SVs, you also get a .tsv file with some summariz
   - bamgroupreads.py + samblaster - create bam files with split and discordant reads
 
 
-| ![DAG](https://github.com/CarolinaPB/population-structural-var-calling-smoove/blob/single_run/dag.png) |
+| ![DAG](https://github.com/CarolinaPB/population-structural-var-calling-smoove/blob/single_run/workflow.png) |
 |:--:|
 |*Pipeline workflow* |
 
