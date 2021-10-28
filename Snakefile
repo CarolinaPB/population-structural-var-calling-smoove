@@ -10,12 +10,12 @@ import pandas as pd
 #################################
 
 if "OUTDIR" in config:
-    print("\nSaving to " + config["OUTDIR"] + "\n")
+    # print("\nSaving to " + config["OUTDIR"] + "\n")
     workdir: config["OUTDIR"]
 
 makedirs("logs_slurm")
 
-pipeline = "population-structural-var-calling-smoove" # replace with your pipeline's name
+pipeline = "population-structural-var-calling-smoove" 
 
 
 include: "rules/create_file_log.smk"
@@ -33,13 +33,18 @@ samples_table = pd.read_csv(SAMPLES_LIST, header=None)
 samples_list = list(samples_table.iloc[:,1])
 SAMPLES = [os.path.splitext(x)[0] for x in samples_list]
 
-def preprocessing(choice):
-    if choice == "Y":
-        return(expand("1_call/{sample}.{read_type}.bam", sample = SAMPLES, read_type = ["disc", "split"]))
-    elif choice == "N":
+def preprocessing(wildcards):
+    '''
+    If mapping has been done with bwa mem -M option, then run an extra step fo creating bam files with split and discordant reads before smoove_call
+    '''
+    makedirs("1_call")
+    if BWA_MEM_M == "Y":
+        return("1_call/{sample}.done")
+    elif BWA_MEM_M == "N":
         return([])
 
-localrules: create_file_log, simple_stats
+
+localrules: create_file_log, simple_stats, plot_PCA
 
 rule all:
     input:
@@ -52,50 +57,55 @@ rule all:
         "5_postprocessing/"+ PREFIX + "_DUP_DEL_INV_table.tsv",
 
 
-
+# Create comma separated list of contigs to ignore
 with open(CONTIGS_IGNORE, "r") as infile:
     content =  infile.read().splitlines()
     CONTIGS =  ",".join(content)
 
 rule split_disc_reads:
+    '''
+    If the mapping has been done with bwa mem -M option, using the smoove pipeline, the support for SR will always be zero. 
+    This step creates the split and discordant reads beforehand, which fixes this problem
+    '''
     input:
         os.path.join(READS_DIR, "{sample}.bam")
     output:
-        split = "1_call/{sample}.split.sam",
-        disc = "1_call/{sample}.disc.sam"
+        done = touch("1_call/{sample}.done")
     message:
         'Rule {rule} processing'
     params:
-        scripts_dir = os.path.join(workflow.basedir, "scripts/")
+        scripts_dir = os.path.join(workflow.basedir, "scripts/"),
+        outdir = "1_call"
     conda:
         "envs/python2.7.yml"
     group:
         'smoove_call'
     shell:
         """
-python {params.scripts_dir}bamgroupreads.py -f -M -i {input} | samblaster --ignoreUnmated -M -a -e -d {output.disc} -s {output.split} -o /dev/null        
+module load samtools
+
+sname=`samtools view -H {input} | grep '^@RG' | sed "s/.*SM:\([^\\t]*\).*/\\1/g" | uniq`
+
+python {params.scripts_dir}bamgroupreads.py -f -M -i {input} | samblaster --ignoreUnmated -M -a -e -d {params.outdir}/{wildcards.sample}.disc.sam -s {params.outdir}/{wildcards.sample}.split.sam -o /dev/null
+
+
+grep -v "SAMBLASTER" {params.outdir}/{wildcards.sample}.split.sam > $sname.tmp.sam
+mv $sname.tmp.sam {params.outdir}/{wildcards.sample}.split.sam
+grep -v "SAMBLASTER" {params.outdir}/{wildcards.sample}.disc.sam > $sname.tmp.sam
+mv $sname.tmp.sam {params.outdir}/{wildcards.sample}.disc.sam
+
+samtools sort -@ 12 -O bam {params.outdir}/{wildcards.sample}.split.sam > {params.outdir}/$sname.split.bam
+samtools sort -@ 12 -O bam {params.outdir}/{wildcards.sample}.disc.sam > {params.outdir}/$sname.disc.bam
+
+rm {params.outdir}/{wildcards.sample}.split.sam {params.outdir}/{wildcards.sample}.disc.sam
         """
 
-rule sort_reads:
-    input:
-        "1_call/{sample}.{read_type}.sam"
-    output:
-        "1_call/{sample}.{read_type}.bam"
-    message:
-        'Rule {rule} processing'
-    group:
-        'smoove_call'
-    shell:
-        """
-module load samtools
-samtools sort -@ 12 -O bam {input} > {output}
-        """
 
 rule smoove_call:
     input:
         bam = os.path.join(READS_DIR, "{sample}.bam"),
         reference = REFERENCE,
-        preprocessing = preprocessing(BWA_MEM_M)
+        preprocessing = preprocessing
     output:
         vcf = temp("1_call/{sample}-smoove.genotyped.vcf.gz"),
         idx = temp("1_call/{sample}-smoove.genotyped.vcf.gz.csi"),
@@ -207,7 +217,7 @@ rule run_vep:
         rules.smoove_paste.output
     output:
         vcf = '5_postprocessing/{prefix}.smoove.square.vep.vcf.gz',
-        # warnings = "results/{prefix}.vcftyper.sorted.vep.vcf.gz_warnings.txt",
+        # warnings = "5_postprocessing/{prefix}.suqare.vep.vcf.gz_warnings.txt",
         summary = "5_postprocessing/{prefix}.smoove.square.vep.vcf.gz_summary.html"
     message:
         'Rule {rule} processing'
@@ -241,26 +251,43 @@ module load samtools
 rule PCA:
     input:
         vcf = rules.run_vep.output.vcf,
-        sample_list = SAMPLES_LIST
     output:
         eigenvec = "5_postprocessing/{prefix}.eigenvec",
         eigenval = "5_postprocessing/{prefix}.eigenval",
-        pdf = "FIGURES/{prefix}.pdf"
     message:
         'Rule {rule} processing'
     params:
         prefix= os.path.join("5_postprocessing",PREFIX),
-        rscript = os.path.join(workflow.basedir, "scripts/basic_pca_plot.R"),
         num_chrs = NUM_CHRS
     group:
         'calling'
     shell:
         """
-        module load R/3.6.2
         module load plink/1.9-180913
 
         plink --vcf {input.vcf} --pca --double-id --out {params.prefix} --chr-set {params.num_chrs} --allow-extra-chr --threads 8
-        Rscript {params.rscript} --eigenvec={output.eigenvec} --eigenval={output.eigenval} --output={output.pdf} --sample_list={input.sample_list}
+        """
+
+rule plot_PCA:
+    input:
+        eigenvec = rules.PCA.output.eigenvec,
+        eigenval = rules.PCA.output.eigenval,
+        sample_list = SAMPLES_LIST
+    output:
+        "FIGURES/{prefix}.pdf"
+    message:
+        'Rule {rule} processing'
+    params:
+        rscript = os.path.join(workflow.basedir, "scripts/basic_pca_plot.R")
+    # group:
+    #     'calling'
+    shell:
+        """
+module load R/3.6.2
+echo $CONDA_PREFIX
+export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
+echo $LD_LIBRARY_PATH
+Rscript {params.rscript} --eigenvec={input.eigenvec} --eigenval={input.eigenval} --output={output} --sample_list={input.sample_list}
         """
 
 rule simple_stats:
