@@ -1,0 +1,41 @@
+name: python2.7
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - _libgcc_mutex=0.1=conda_forge
+  - _openmp_mutex=4.5=1_gnu
+  - argparse=1.4.0=py27_0
+  - bzip2=1.0.8=h7f98852_4
+  - c-ares=1.17.2=h7f98852_0
+  - ca-certificates=2021.10.8=ha878542_0
+  - certifi=2019.11.28=py27h8c360ce_1
+  - krb5=1.19.2=hcc1bbae_2
+  - ld_impl_linux-64=2.36.1=hea4e1c9_2
+  - libcurl=7.79.1=h2574ce0_1
+  - libdeflate=1.7=h7f98852_5
+  - libedit=3.1.20191231=he28a2e2_2
+  - libev=4.33=h516909a_1
+  - libffi=3.2.1=he1b5a44_1007
+  - libgcc-ng=11.2.0=h1d223b6_11
+  - libgomp=11.2.0=h1d223b6_11
+  - libnghttp2=1.43.0=h812cca2_1
+  - libssh2=1.10.0=ha56f1ee_2
+  - libstdcxx-ng=11.2.0=he4da1e4_11
+  - libzlib=1.2.11=h36c2ea0_1013
+  - ncurses=6.2=h58526e2_4
+  - openssl=1.1.1l=h7f98852_0
+  - pip=20.1.1=pyh9f0ad1d_0
+  - pysam=0.17.0=py27hc729bab_0
+  - python=2.7.15=h5a48372_1011_cpython
+  - python_abi=2.7=1_cp27mu
+  - readline=8.1=h46c0cb4_0
+  - samblaster=0.1.26=h7d875b9_1
+  - setuptools=44.0.0=py27_0
+  - sqlite=3.36.0=h9cd32fc_2
+  - tk=8.6.11=h27826a3_1
+  - wheel=0.37.0=pyhd8ed1ab_1
+  - xz=5.2.5=h516909a_1
+  - zlib=1.2.11=h36c2ea0_1013
+prefix: /home/WUR/moiti001/miniconda3/envs/python2.7
