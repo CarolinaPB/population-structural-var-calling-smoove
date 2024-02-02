@@ -1,0 +1,38 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: population-structural-var-calling-smoove
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Carolina
+    family-names: Pita Barros
+    orcid: 'https://orcid.org/0000-0002-6755-0643'
+identifiers:
+  - type: url
+    value: >-
+      https://github.com/CarolinaPB/population-structural-var-calling-smoove
+    description: A link to the GitHub page
+repository-code: >-
+  https://github.com/CarolinaPB/population-structural-var-calling-smoove
+url: >-
+  https://github.com/CarolinaPB/population-structural-var-calling-smoove
+abstract: >-
+  This is a pipeline to perform structural variant calling
+  in a population using Smoove. It also runs VEP and
+  performs PCA. In addition to the VCF with the SVs, you
+  also get a .tsv file with some summarized information on
+  the SVs: it includes allele frequency per population, as
+  well as VEP annotation and depth fold change.
+keywords:
+  - structural variance
+  - SV calling
+  - snakemake
+  - smoove
+license: MIT
+commit: bef171f
+version: 0.1.0
+date-released: '2021-11-01'
